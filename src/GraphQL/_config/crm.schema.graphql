@@ -1,0 +1,284 @@
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+type Address {
+  address1: String
+  address2: String
+  barangay: String
+  city: String
+  province: String
+  region: String
+  unit: String
+  zip_code: String
+}
+
+type CallInfo {
+  answered_call: Boolean
+  answered_call_type: Boolean
+  has_time: Boolean
+  has_time_type: Boolean
+  reschedule_date: AWSDate
+  reschedule_time: AWSTime
+  schedule_date: AWSDate
+  schedule_time: AWSTime
+  status: String
+  type: String
+}
+
+type Feedback {
+  response: String
+  title: String
+}
+
+type HyperCareConnection {
+  items: [Hypercare]
+}
+
+type Hypercare {
+  call_info: CallInfo
+  consumer_address: Address
+  continue_feedback: Boolean
+  customer_id: ID
+  customer_info: Trial
+  date: AWSDate
+  delivery_date: AWSDate
+  delivery_time: AWSTime
+  extended_adoption: Boolean
+  feedback_date: AWSDate
+  feedback_time: AWSTime
+  feedbacks: [Feedback]
+  hypercare_id: ID
+  interested_to_zyn: Boolean
+  order_id: String
+  orders: [Order]
+  schedule_logs: [ScheduleLogs]
+  status: String
+  time: AWSTime
+  week: String
+}
+
+type Mutation {
+  hypercareCreate(input: HypercareInput): Hypercare
+  hypercareUpdate(input: HypercareUpdateInput): Hypercare
+  sampleCreate(att1: String, att2: Float, id: ID): Sample @aws_lambda
+  trialCreate(input: TrialInput!): Trial
+}
+
+type Order {
+  description: String
+  quantity: String
+  sku: String
+  uom: String
+  variant: String
+}
+
+type Query @aws_iam @aws_lambda {
+  hyperCarePerCustomer(customer_id: ID): HyperCareConnection
+  hyperCarePerWeek(week: String): HyperCareConnection
+  hypercare(id: ID!): Hypercare
+  reports(from: AWSDate, to: AWSDate, type: ReportType): AWSURL
+  sample(id: ID!): Sample
+  schedule(id: ID!): Schedule
+  schedules(date: AWSDate): ScheduleConnection
+  trial(id: ID!): Trial
+  trials(
+    date_filter: DateFilterInput
+    filters: [FilterInput]
+    from: Int
+    limit: Int
+    search: String
+    sort: SortInput
+  ): TrialConnection
+  weekCounts: [WeekCount]
+}
+
+type Sample @aws_lambda {
+  att1: String
+  att2: Float
+  id: ID!
+}
+
+type Schedule {
+  customer_id: ID
+  customer_info: Trial
+  date: AWSDate
+  datetime_created: AWSTimestamp
+  hypercare_id: ID
+  schedule_id: ID
+  status: String
+  time: AWSTime
+  type: String
+}
+
+type ScheduleConnection {
+  items: [Schedule]
+}
+
+type ScheduleLogs {
+  date: AWSDate
+  reason: String
+  time: AWSTime
+  type: String
+}
+
+type Subscription {
+  sampleCreated: Sample @aws_subscribe(mutations: ["sampleCreate"])
+}
+
+type Trial {
+  age: Int
+  contact_no: String
+  customer_id: ID
+  date_of_birth: AWSDate
+  datetime_created: AWSTimestamp
+  discontinue_reason: String
+  email: AWSEmail
+  first_name: String
+  gender: String
+  gt_date: AWSDate
+  gt_time: AWSTime
+  last_name: String
+  marketing_opt_in: String
+  primary_nicotine_product: String
+  privacy_notice: String
+  registration_channel: String
+  status: String
+  zyn_used: [Order]
+}
+
+type TrialConnection {
+  items: [Trial]
+  total: Int
+}
+
+type WeekCount {
+  total: Int
+  week: String
+}
+
+enum DateFilterType {
+  datetime_created
+  gt_date
+}
+
+enum ReportType {
+  HYPERCARE
+  TRIAL
+}
+
+enum SortType {
+  ASC
+  DESC
+}
+
+input AddressInput {
+  address1: String
+  address2: String
+  barangay: String
+  city: String
+  province: String
+  region: String
+  unit: String
+  zip_code: String
+}
+
+input CallInfoInput {
+  answered_call: Boolean
+  answered_call_type: Boolean
+  has_time: Boolean
+  has_time_type: Boolean
+  reschedule_date: AWSDate
+  reschedule_time: AWSTime
+  schedule_date: AWSDate
+  schedule_time: AWSTime
+  status: String
+  type: String
+}
+
+input DateFilterInput {
+  from: String
+  to: String
+  type: DateFilterType
+}
+
+input FeedbackInput {
+  response: String
+  title: String
+}
+
+input FilterInput {
+  attribute: String
+  value: String
+}
+
+input HypercareInput {
+  call_info: CallInfoInput
+  consumer_address: AddressInput
+  continue_feedback: Boolean
+  customer_id: ID
+  date: AWSDate!
+  delivery_date: AWSDate
+  delivery_time: AWSTime
+  extended_adoption: Boolean
+  feedback_date: AWSDate
+  feedback_time: AWSTime
+  feedbacks: [FeedbackInput]
+  interested_to_zyn: Boolean
+  order_id: String
+  orders: [OrderInput]
+  status: String
+  time: AWSTime!
+  week: String
+}
+
+input HypercareUpdateInput {
+  call_info: CallInfoInput
+  consumer_address: AddressInput
+  continue_feedback: Boolean
+  customer_id: ID
+  date: AWSDate!
+  delivery_date: AWSDate
+  delivery_time: AWSTime
+  extended_adoption: Boolean
+  feedback_date: AWSDate
+  feedback_time: AWSTime
+  feedbacks: [FeedbackInput]
+  hypercare_id: String!
+  interested_to_zyn: Boolean
+  order_id: String
+  orders: [OrderInput]
+  status: String
+  time: AWSTime!
+  week: String
+}
+
+input OrderInput {
+  description: String
+  quantity: String
+  sku: String
+  uom: String
+  variant: String
+}
+
+input SortInput {
+  attribute: String
+  type: SortType
+}
+
+input TrialInput {
+  age: Int
+  contact_no: AWSPhone
+  customer_id: ID!
+  date_of_birth: AWSDate
+  email: AWSEmail
+  first_name: String
+  gender: String
+  last_name: String
+  marketing_opt_in: String
+  primary_nicotine_product: String
+  privacy_notice: String
+  registration_channel: String
+}

@@ -1,0 +1,220 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+}
+
+type GeoLocation {
+  latitude: Float
+  longitude: Float
+}
+
+type Message {
+  message: String
+}
+
+type Mutation {
+  assetUpload(
+    asset: S3ObjectInput!
+    asset_type: AssetType!
+    record_no: ID!
+    ref_id: ID!
+  ): Message
+  resetPassword(input: ResetPasswordInput): StoreUser
+    @aws_auth(cognito_groups: ["Admin"])
+  storePromoARCreate(input: StorePromoARInput): StorePromoAR
+    @aws_auth(cognito_groups: ["SalesExpert", "SalesExecutive"])
+  storeUserCreate(input: StoreUserInput): StoreUser
+    @aws_auth(cognito_groups: ["Admin"])
+  storeUserUpdate(input: StoreUserUpdateInput): StoreUser
+    @aws_auth(cognito_groups: ["Admin"])
+}
+
+type Promotion {
+  freebie: String
+  freebie1: String
+  freebie2: String
+  input1: String
+  input2: String
+  promotion: String
+  variant: String
+}
+
+type Query {
+  reportStores(date_filter: DateFilter, type: ReportType): AWSURL
+    @aws_auth(cognito_groups: ["SalesExecutive"])
+  storePromoARs(
+    date_filter: DateFilter
+    next_token: String
+  ): StorePromoARsConnection
+  storePromos: StorePromoConnection
+  storeUser(username: String!): StoreUser @aws_auth(cognito_groups: ["Admin"])
+  storeUsers(next_token: String): StoreUserConnection
+    @aws_auth(cognito_groups: ["Admin"])
+}
+
+type S3Object {
+  bucket: String!
+  key: String!
+  region: String!
+}
+
+type StorePromo {
+  combine_with: [String]
+  promo_name: String
+  promo_selection: [StorePromoSelection]
+}
+
+type StorePromoAR {
+  date_created: String
+  date_updated: String
+  freebie: String
+  freebie1: String
+  freebie2: String
+  id: String
+  input1: String
+  input2: String
+  name: String
+  promotion: String
+  promotions: [Promotion]
+  provided_id: String
+  signature: S3Object
+  store_name: String
+  transaction_by: String
+  transaction_number: String
+  variant: String
+}
+
+type StorePromoARsConnection {
+  items: [StorePromoAR]
+  next_token: String
+}
+
+type StorePromoConnection {
+  items: [StorePromo]
+  next_token: String
+}
+
+type StorePromoSelection {
+  freebie: String
+  option_type: String
+  options: [String]
+}
+
+type StoreUser {
+  email: String
+  name: String
+  phone_number: String
+  roles: [Role]
+  user_status: UserStatus
+  username: String
+}
+
+type StoreUserConnection {
+  items: [StoreUser]
+  next_token: String
+}
+
+enum AssetType {
+  PHOTO
+  VIDEO
+}
+
+enum ReportType {
+  STORE_PROMO
+}
+
+enum Role {
+  SalesExecutive
+  SalesExpert
+}
+
+enum SortOrder {
+  asc
+  desc
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+input DateFilter {
+  from: String
+  to: String
+}
+
+input FilterInput {
+  attribute: String
+  value: String
+}
+
+input GeoLocationInput {
+  latitude: Float
+  longitude: Float
+}
+
+input PromotionInput {
+  freebie: String
+  freebie1: String
+  freebie2: String
+  input1: String
+  input2: String
+  promotion: String
+  variant: String
+}
+
+input ResetPasswordInput {
+  password: String
+  username: String!
+}
+
+input S3ObjectInput {
+  bucket: String!
+  key: String!
+  localUri: String
+  mimeType: String
+  region: String!
+}
+
+input SortInput {
+  attribute: String
+  order: SortOrder
+}
+
+input StorePromoARInput {
+  additional_freebie1: String
+  additional_freebie2: String
+  additional_input1: String
+  additional_input2: String
+  additional_promo: String
+  filters: String
+  freebie: String
+  freebie1: String
+  freebie2: String
+  id: String
+  input1: String
+  input2: String
+  name: String
+  promotion: String
+  promotions: [PromotionInput]
+  provided_id: String
+  signature: S3ObjectInput
+  store_name: String
+  variant: String
+}
+
+input StoreUserInput {
+  email: String!
+  name: String!
+  phone_number: String!
+  roles: [Role]!
+  username: String
+}
+
+input StoreUserUpdateInput {
+  email: String
+  name: String
+  phone_number: String
+  roles: [Role]
+  username: String!
+}

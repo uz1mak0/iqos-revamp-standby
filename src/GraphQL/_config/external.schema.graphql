@@ -1,0 +1,43 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+}
+
+type AWB {
+  max: Int
+  prefix: String
+  serial: Int
+  suffix: String
+}
+
+type Mutation {
+  assignLogistics(
+    assigned_hub: ID!
+    order_id: ID!
+    paper_bag_size: PaperBagSize!
+    partner: LogisticsPartner!
+  ): Order
+  printAWB(order_id: ID!): AWSURL
+  removeLogistics(order_id: ID!): Order
+  updateAWB(max: Int, prefix: String, serial: Int, suffix: String): AWB
+}
+
+type Order {
+  assigned_hub: ID
+  assigned_logistics: LogisticsPartner
+  order_id: String
+  paper_bag_size: PaperBagSize
+}
+
+type Query {
+  base: String
+}
+
+enum LogisticsPartner {
+  TWO_GO
+}
+
+enum PaperBagSize {
+  LARGE
+  SMALL
+}

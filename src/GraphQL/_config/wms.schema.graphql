@@ -1,0 +1,1850 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+interface IBatchItems {
+  batch_id: String
+  description: String
+  expiration_date: String
+  gtin: String
+  inventory: InventoryItemConnection
+  quantity: Int
+  sku: String
+  unit_of_measure: String
+  warehouse_id: String
+}
+
+interface ITransaction {
+  date_created: String
+  date_updated: String
+  id: String
+  invoice_id: String
+  remarks: String
+  status: TransactionStatus
+  warehouse_id: String
+}
+
+type Accounts {
+  cod: String
+  non_cod: String
+}
+
+type Admin {
+  channel: ChannelType
+  email: String
+  name: String
+  office_id: String
+  office_ids: [String]
+  office_name: String
+  phone_number: String
+  roles: [Role]
+  user_status: UserStatus
+  username: String
+  wallet: Wallet
+}
+
+type AdminConnection {
+  items: [Admin]
+  next_token: String
+}
+
+type Batch {
+  available: Int
+  batch_no: String
+  blocked: Int
+  quantity: Int
+  unit_of_measure: String
+}
+
+type BatchConversionItems implements IBatchItems {
+  batch_id: String
+  batches: [BatchItems]
+  conversion_id: String
+  description: String
+  destination_sku: DestinationSku
+  expiration_date: String
+  gtin: String
+  inventory: InventoryItemConnection
+  multiplier: Float
+  quantity: Int
+  sku: String
+  unit_of_measure: String
+  updated_by: String
+  warehouse_id: String
+}
+
+type BatchItems implements IBatchItems @aws_cognito_user_pools {
+  batch_id: String
+  committed: Int
+  description: String
+  expiration_date: String
+  gtin: String
+  inventory: InventoryItemConnection
+  inventory_type: String
+  pullout: Int
+  quantity: Int
+  released: Int
+  returned: Int
+  sku: String
+  transferred: Int
+  transferred_out: Int
+  transmittal: Int
+  unit_of_measure: String
+  updated_by: String
+  warehouse_id: String
+}
+
+type BatchItemsConnection @aws_cognito_user_pools {
+  items: [BatchItems]
+  next_token: String
+}
+
+type BatchPulloutItems implements IBatchItems {
+  batch_id: String
+  description: String
+  expiration_date: String
+  gtin: String
+  inventory: InventoryItemConnection
+  pullout_id: String
+  quantity: Int
+  sku: String
+  unit_of_measure: String
+  updated_by: String
+  warehouse_id: String
+}
+
+type BatchReturnItems implements IBatchItems {
+  batch_id: String
+  description: String
+  expiration_date: String
+  gtin: String
+  inventory: InventoryItemConnection
+  quantity: Int
+  return_id: String
+  sku: String
+  unit_of_measure: String
+  updated_by: String
+  warehouse_id: String
+}
+
+type BatchTransferItems implements IBatchItems {
+  batch_id: String
+  description: String
+  expiration_date: String
+  gtin: String
+  inventory: InventoryItemConnection
+  quantity: Int
+  received: Int
+  sku: String
+  transfer_id: String
+  unit_of_measure: String
+  updated_by: String
+  warehouse_id: String
+}
+
+type BatchTransmittalItems implements IBatchItems {
+  batch_id: String
+  description: String
+  expiration_date: String
+  gtin: String
+  inventory: InventoryItemConnection
+  quantity: Int
+  recon_id: String
+  sku: String
+  transmittal_id: String
+  unit_of_measure: String
+  updated_by: String
+  warehouse_id: String
+}
+
+type CategoryItem {
+  title: String
+  type: String
+  value: String
+}
+
+type Coach {
+  coach_id: String
+  email: String
+  name: String
+  phone_number: String
+  user_status: UserStatus
+}
+
+type CoachConnection {
+  items: [Coach]
+  next_token: String
+}
+
+type Conversion implements ITransaction {
+  batch_items: [BatchConversionItems]
+  created_by: String
+  date: String
+  date_created: String
+  date_updated: String
+  id: String
+  invoice_id: String
+  remarks: String
+  status: TransactionStatus
+  time: String
+  updated_by: String
+  warehouse_id: String
+}
+
+type ConversionConnection {
+  items: [Conversion]
+  next_token: String
+}
+
+type CustomerInformation {
+  email: String
+  first_name: String
+  last_name: String
+  mobile_number: String
+}
+
+type DestinationSku {
+  description: String
+  gtin: String
+  sku: String
+  unit_of_measure: String
+}
+
+type DirectTransfer implements ITransaction {
+  batch_items: [BatchTransferItems]
+  created_by: String
+  date_created: String
+  date_updated: String
+  id: String
+  invoice_id: String
+  logs: [TransactionLog]
+  reason_for_cancel: String
+  remarks: String
+  status: TransactionStatus
+  to_warehouse_id: String
+  transfer_type: DirectTransferType
+  updated_by: String
+  warehouse_id: String
+}
+
+type DirectTransferConnection {
+  items: [DirectTransfer]
+  next_token: String
+}
+
+type EndOfDay {
+  created_by: ID
+  date_created: AWSTimestamp
+  datetime: AWSTimestamp
+  finance_declarations: FinanceDecarations
+  id: ID
+  invoice_id: ID
+  non_sellable_declarations: [NonSellableItem]
+  warehouse_id: ID
+}
+
+type EndOfDayConnection {
+  items: [EndOfDay]
+  nextToken: String
+}
+
+type FinanceDecarations {
+  proof_of_payment: ProofOfPayment
+  sales_summary: SalesSummary
+  upload_slip: UploadSlip
+  uploads: UploadReceipts
+}
+
+type FootTraffic {
+  count: Int
+  date: String
+  date_created: String
+  warehouse_id: ID
+}
+
+type FootTrafficConnection {
+  items: [FootTraffic]
+  next_token: String
+}
+
+type GeoLocation {
+  latitude: Float
+  longitude: Float
+}
+
+type GuidedTrial @aws_cognito_user_pools {
+  created_by: ID
+  customer_information: CustomerInformation
+  date_created: AWSTimestamp
+  date_updated: AWSTimestamp
+  device: String
+  first_time_gt: Boolean
+  id: ID
+  items: [LineItem]
+  sales_transaction: SaleTransaction
+  sales_transaction_id: ID
+  sgt: Boolean
+  type: GuidedTrialType
+  updated_by: ID
+  warehouse_id: ID
+}
+
+type GuidedTrialConnection {
+  items: [GuidedTrial]
+  nextToken: String
+}
+
+type InventoryItem @aws_api_key @aws_cognito_user_pools {
+  batch_id: String
+  charger_serial: String
+  cycle: Float
+  cycle_history: [Float]
+  date_created: String
+  date_updated: String
+  delivery_source: String
+  description: String
+  expiration_date: String
+  gtin: String
+  holder_serial: String
+  id: String
+  issue_date: String
+  item_status: InventoryItemStatus
+  lead_id: String
+  location: String
+  manufacturing_date: String
+  order_history: [ID]
+  order_id: String
+  pullout_id: String
+  recon_id: String
+  reconcile_count: Int
+  return_id: String
+  serial: String
+  sku: String
+  status_date: String
+  tag: String
+  transfer_id: String
+  transmittal_id: String
+  unit_of_measure: String
+  usage_history: [UsageHistory]
+  warehouse_id: String
+}
+
+type InventoryItemConnection @aws_cognito_user_pools {
+  items: [InventoryItem]
+  next_token: String
+}
+
+type ItemStocks {
+  gtin: String
+  quantity: Int
+  warehouse_id: String
+}
+
+type LineItem @aws_cognito_user_pools {
+  discount: Float
+  input: String
+  inputs: [String]
+  is_promo_good: Boolean
+  menthol_variant: MentholVariant
+  price: Float
+  promo: ID
+  promo_discount: Float
+  promo_type: String
+  quantity: Int
+  serials: [ID]
+  sku: SKU
+}
+
+type Material {
+  material_number: String
+  plants: [Plant]
+  sellable: Int
+}
+
+type Message {
+  message: String
+}
+
+type Mutation {
+  adminCreate(input: AdminInput): Admin
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  adminUpdate(input: AdminUpdateInput): Admin
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  assetUpload(
+    asset: S3ObjectInput!
+    asset_type: AssetType!
+    record_no: ID!
+    ref_id: ID!
+  ): Message
+  coachCreate(input: CoachInput): Coach
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  coachUpdate(input: CoachUpdateInput): Coach
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  conversionCreate(id: String, input: ConversionInput): Conversion
+  conversionUpdate(input: ConversionUpdateInput): Conversion
+  convertByBatch(conversion_id: String!, input: ConvertItemsInput): Conversion
+  convertByBatchVoid(
+    conversion_id: String!
+    input: ConvertItemsInput
+  ): Conversion
+  directTransferCreate(id: String, input: DirectTransferInput): DirectTransfer
+  directTransferUpdate(input: TransferUpdateInput): DirectTransfer
+  endOfDayCreate(input: EndOfDayInput!): EndOfDay
+  footTrafficCreate(count: Int!, date: String!, warehouse_id: ID!): FootTraffic
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  guidedTrialCreate(input: GuidedTrialInput!): GuidedTrial
+    @aws_auth(cognito_groups: ["Admin", "Executive", "Coach"])
+    @aws_cognito_user_pools
+  inventoryReconcile(input: ReconcileInput): InventoryItem
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  promoCreate(
+    code: ID!
+    description: String
+    discount: Float
+    discount_type: DiscountType
+    name: String!
+    type: PromoType
+  ): Promo @aws_cognito_user_pools
+  promoUpdate(
+    code: ID!
+    description: String
+    discount: Float
+    discount_type: DiscountType
+    name: String
+    status: PromoStatus
+    type: PromoType
+  ): Promo @aws_cognito_user_pools
+  pulloutByBatch(input: BatchItemsInput, pullout_id: String!): Pullout
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  pulloutByBatches(input: [BatchItemsInput], pullout_id: String!): Pullout
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  pulloutCreate(id: String, input: PulloutInput): Pullout
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  pulloutItem(
+    batch_input: BatchItemsInput
+    pullout_id: String!
+    serial: String!
+    type: String
+  ): InventoryItem @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  pulloutItemVoid(
+    batch_input: BatchItemsInput
+    pullout_id: String!
+    serial: String
+  ): Pullout @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  pulloutUpdate(input: PulloutUpdateInput): Pullout
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  reconByBatch(input: BatchItemsInput, recon_id: String!): Transmittal
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  reconByBatches(input: [BatchItemsInput], recon_id: String!): Pullout
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  reconCreate(id: String, input: TransmittalInput): Transmittal
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  reconUpdate(input: TransmittalUpdateInput): Transmittal
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  refundTransactionRecord(input: RefundTransactionInput!): SaleTransaction
+    @aws_auth(cognito_groups: ["Admin", "Executive", "Coach"])
+    @aws_cognito_user_pools
+  refundTransactionRemove(transaction_id: ID!): SaleTransaction
+    @aws_auth(cognito_groups: ["Admin", "Executive", "Coach"])
+    @aws_cognito_user_pools
+  refundTransactionUpdate(
+    input: RefundTransactionInput!
+    transaction_id: ID!
+  ): SaleTransaction
+    @aws_auth(cognito_groups: ["Admin", "Executive", "Coach"])
+    @aws_cognito_user_pools
+  reportDownload(
+    error: String
+    request_id: ID!
+    status: String
+    url: AWSURL
+  ): Report
+  reportRequest(
+    channel: ChannelType
+    date_filter: DateFilter
+    request_id: ID!
+    sort: String
+    status: String
+    type: ReportType
+    warehouse_id: String
+    warehouse_ids: [String]
+  ): Report
+  returnByBatch(input: BatchItemsInput, return_id: String!): Return
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  returnByBatches(input: [BatchItemsInput], return_id: String!): Return
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  returnCreate(id: String, input: ReturnInput): Return
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  returnItem(
+    batch_input: BatchItemsInput
+    return_id: String!
+    serial: String!
+  ): InventoryItem @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  returnItemVoid(
+    batch_input: BatchItemsInput
+    return_id: String!
+    serial: String
+  ): Return @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  returnUpdate(input: ReturnUpdateInput): Return
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  saleTransactionRecord(input: SaleTransactionInput!): SaleTransaction
+    @aws_auth(cognito_groups: ["Admin", "Executive", "Coach"])
+    @aws_cognito_user_pools
+  saleTransactionRemove(transaction_id: ID!): SaleTransaction
+    @aws_auth(cognito_groups: ["Admin", "Executive", "Coach"])
+    @aws_cognito_user_pools
+  saleTransactionUpdate(
+    input: SaleTransactionInput!
+    transaction_id: ID!
+  ): SaleTransaction
+    @aws_auth(cognito_groups: ["Admin", "Executive", "Coach"])
+    @aws_cognito_user_pools
+  salesExpertCreate(input: SalesExpertInput): SalesExpert
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+    @aws_cognito_user_pools
+  salesExpertDelete(sales_expert_id: String!): SalesExpert
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+    @aws_cognito_user_pools
+  salesExpertUpdate(input: SalesExpertUpdateInput): SalesExpert
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+    @aws_cognito_user_pools
+  sftpStocks: Message @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  skuBlockUpdate(input: SKUBlockInput): SKUBlockLogs
+    @aws_cognito_user_pools(cognito_groups: ["Admin"])
+  skuCreate(input: SKUInput!): SKU @aws_auth(cognito_groups: ["Admin"])
+  skuUpdate(input: SKUInput!): SKU @aws_auth(cognito_groups: ["Admin"])
+  theftCreate(input: TheftInput, warehouse_id: ID!): Theft
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  thresholdConfigCreate(input: ThresholdConfigInput): ThresholdConfig
+  thresholdConfigRemove(warehouse_id: ID!): ThresholdConfig
+  thresholdConfigUpdate(input: ThresholdConfigInput): ThresholdConfig
+  transactionRemove(id: String): Transmittal
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  transferByBatch(input: BatchItemsInput, transfer_id: String!): Transfer
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  transferByBatchReceive(
+    input: BatchItemsInput
+    transfer_id: String!
+  ): Transfer @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  transferCancel(id: String!, reason_for_cancel: String): Transfer
+  transferCreate(id: String, input: TransferInput): Transfer
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  transferItem(
+    batch_input: BatchItemsInput
+    serial: String!
+    transfer_id: String!
+    type: String
+  ): InventoryItem @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  transferItemReceive(
+    batch_input: BatchItemsInput
+    serial: String!
+    transfer_id: String!
+    type: String
+  ): InventoryItem @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  transferItemReceiveVoid(
+    batch_input: BatchItemsInput
+    serial: String
+    transfer_id: String!
+  ): Transfer @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  transferItemVoid(
+    batch_input: BatchItemsInput
+    serial: String
+    transfer_id: String!
+  ): Transfer @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  transferUpdate(input: TransferUpdateInput): Transfer
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  transmitByBatch(input: BatchItemsInput, transmittal_id: String!): Transmittal
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  transmitItem(
+    batch_input: BatchItemsInput
+    input: InventoryItemInput
+    transmittal_id: String!
+  ): InventoryItem @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  transmitItemVoid(
+    batch_input: BatchItemsInput
+    serial: String
+    transmittal_id: String!
+  ): Transmittal @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  transmittalCreate(id: String, input: TransmittalInput): Transmittal
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  transmittalUpdate(input: TransmittalUpdateInput): Transmittal
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  updateDeviceExpiration(
+    batch_id: String!
+    gtin: String!
+    warehouse_id: String!
+  ): BatchItems
+  updateWarehouseStatus(id: String!, status: Boolean!): Warehouse
+    @aws_auth(cognito_groups: ["Admin"])
+  uploadSales(
+    date: AWSDate!
+    file: S3ObjectInput
+    request_id: ID!
+    warehouse_id: ID!
+    uno_template_type: UnoTemplateType
+  ): ID
+  userDisable(username: String): Admin
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  userEnable(username: String): Admin
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  validateUpload(
+    error_logs: [String]
+    error_url: AWSURL
+    uno_project_url: AWSURL
+    errors: Int
+    processed_file: S3ObjectInput
+    request_id: ID
+    rows: Int
+    valid: Int
+  ): SalesUpload
+  voucherRedeem(input: VoucherRedeemInput): Message @aws_cognito_user_pools
+  voucherRequest(input: VoucherRequestInput): VoucherRequest
+    @aws_cognito_user_pools
+  voucherRequestUpdate(input: VoucherRequestUpdateInput): VoucherRequest
+    @aws_cognito_user_pools
+  warehouseCreate(input: WarehouseInput): Warehouse
+    @aws_auth(cognito_groups: ["Admin"])
+  warehouseUpdate(input: WarehouseInput): Warehouse
+    @aws_auth(cognito_groups: ["Admin"])
+}
+
+type NonSellableItem {
+  category: String
+  category_items: [CategoryItem]
+}
+
+type PaymentInfo {
+  price: Float
+  type: String
+}
+
+type Plant {
+  plant_number: String
+  storages: [Storage]
+}
+
+type Promo @aws_cognito_user_pools {
+  code: ID
+  description: String
+  discount: Float
+  discount_type: DiscountType
+  name: String
+  status: PromoStatus
+  type: PromoType
+}
+
+type PromoConnection @aws_cognito_user_pools {
+  items: [Promo]
+  nextToken: String
+}
+
+type ProofOfPayment {
+  date_of_deposit: AWSDate
+  deposit_reference_number: String
+  total_cash_deposit: Float
+}
+
+type Pullout implements ITransaction {
+  batch_items: [BatchPulloutItems]
+  created_by: String
+  date_created: String
+  date_updated: String
+  id: String
+  invoice_id: String
+  logs: [TransactionLog]
+  pullout_to: String
+  pullout_type: PulloutType
+  remarks: String
+  status: TransactionStatus
+  updated_by: String
+  warehouse_id: String
+}
+
+type PulloutConnection {
+  items: [Pullout]
+  next_token: String
+}
+
+type Query {
+  admin(username: String!): Admin
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  admins(channel: ChannelType, next_token: String): AdminConnection
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  batch(batch_id: String!, gtin: String!, warehouse_id: String!): BatchItems
+  batchesPerWarehouse(
+    limit: Int
+    next_token: String
+    type: String
+    warehouse_id: String!
+  ): BatchItemsConnection @aws_cognito_user_pools
+  batchesPerWarehouse2(
+    next_token: String
+    warehouse_id: String!
+  ): BatchItemsConnection
+  coach(coach_id: String!): Coach
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  coaches(next_token: String, user_status: UserStatus): CoachConnection
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+  conversion(id: String!): Conversion
+  conversions(
+    next_token: String
+    status: TransactionStatus
+    warehouse_id: String!
+  ): ConversionConnection
+  directTransfer(id: String!): DirectTransfer
+  directTransfers(
+    date_filter: DateFilter
+    next_token: String
+    status: TransactionStatus
+  ): DirectTransferConnection
+  directTransfersToWarehouse(
+    next_token: String
+    status: TransactionStatus
+    warehouse_id: String!
+  ): DirectTransferConnection
+  endOfDay(id: ID!): EndOfDay
+  endOfDayList(
+    date_filter: DateFilter
+    next_token: String
+    warehouse_id: ID
+  ): EndOfDayConnection
+  footTraffic(
+    date_filter: DateFilter
+    next_token: String
+  ): FootTrafficConnection
+  gtInventoryItems(
+    next_token: String
+    warehouse_id: String
+  ): InventoryItemConnection
+    @aws_auth(cognito_groups: ["Admin", "Executive", "Coach"])
+    @aws_cognito_user_pools
+  guidedTrial(id: ID!): GuidedTrial
+    @aws_auth(cognito_groups: ["Admin", "Executive", "Coach"])
+    @aws_cognito_user_pools
+  guidedTrials(next_token: String): GuidedTrialConnection
+    @aws_auth(cognito_groups: ["Admin", "Executive", "Coach"])
+    @aws_cognito_user_pools
+  inventoryCheck(input: InventoryCheckInput!): Message @aws_cognito_user_pools
+  inventoryItem(serial: String!): InventoryItem @aws_cognito_user_pools
+  inventoryItems(
+    next_token: String
+    status: InventoryItemStatus
+    warehouse_id: String
+  ): InventoryItemConnection @aws_cognito_user_pools
+  inventoryPerBatchPullout(
+    batch_id: String!
+    next_token: String
+    pullout_id: String!
+  ): InventoryItemConnection
+  inventoryPerBatchTransfer(
+    batch_id: String!
+    gtin: String!
+    next_token: String
+    transfer_id: String!
+  ): InventoryItemConnection
+  inventoryPerBatchTransmittal(
+    batch_id: String!
+    gtin: String!
+    next_token: String
+    transmittal_id: String!
+  ): InventoryItemConnection
+  itemStocks(gtin: String!, type: String!, warehouse_id: String!): ItemStocks
+  promos(next_token: String): PromoConnection @aws_cognito_user_pools
+  pullout(id: String!): Pullout
+  pullouts(
+    date_filter: DateFilter
+    next_token: String
+    status: TransactionStatus
+  ): PulloutConnection
+  recon(id: String!): Transmittal
+  recons(
+    date_filter: DateFilter
+    next_token: String
+    status: TransactionStatus
+  ): TransmittalConnection
+  refundTransactions(
+    date_filter: TimestampFilter
+    warehouse_id: ID!
+  ): SaleTransactionConnection @aws_cognito_user_pools
+  return(id: String!): Return
+  saleTransaction(id: ID!): SaleTransaction @aws_cognito_user_pools
+  saleTransactions(
+    date_filter: TimestampFilter
+    warehouse_id: ID!
+  ): SaleTransactionConnection @aws_cognito_user_pools
+  saleTransactionsAggregate(
+    date_filters: [CustomDateFilter]
+    filters: [CustomFilter]
+    from: Int
+    limit: Int
+    search: CustomFilter
+  ): SaleTransactionConnection @aws_cognito_user_pools
+  salesExpert(sales_expert_id: String!): SalesExpert
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+    @aws_cognito_user_pools
+  salesExperts(
+    next_token: String
+    user_status: UserStatus
+  ): SalesExpertConnection
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+    @aws_cognito_user_pools
+  sku(id: String!): SKU @aws_cognito_user_pools
+  skuBlockLogs(from: AWSTimestamp, to: AWSTimestamp): SKUBlockLogsConnection
+    @aws_cognito_user_pools(cognito_groups: ["Admin"])
+  skuBlocks: SKUConnection @aws_cognito_user_pools(cognito_groups: ["Admin"])
+  skuInventory: SKUInventoryConnection
+  skus(channel: ChannelType, next_token: String): SKUConnection
+    @aws_auth(cognito_groups: ["Admin", "WarehousePersonnel"])
+    @aws_cognito_user_pools
+  stocks: Stocks
+  thefts(date_filter: DateFilter, next_token: String): TheftsConnection
+  thresholdConfig(warehouse_id: ID!): ThresholdConfig
+  thresholdConfigs: ThresholdConfigConnection
+  transactionsPerWarehouse(
+    next_token: String
+    status: TransactionStatus
+    type: TransactionType
+    warehouse_id: String!
+  ): TransactionConnection
+  transfer(id: String!): Transfer
+  transfers(
+    date_filter: DateFilter
+    next_token: String
+    status: TransactionStatus
+  ): TransferConnection
+  transfersToWarehouse(
+    next_token: String
+    status: TransactionStatus
+    warehouse_id: String!
+  ): TransferConnection
+  transmittal(id: String!): Transmittal
+  transmittals(
+    date_filter: DateFilter
+    next_token: String
+    status: TransactionStatus
+  ): TransmittalConnection
+  voucherInventoryItems(
+    next_token: String
+    status: InventoryItemStatus
+    type: PromoType
+    warehouse_id: String
+  ): InventoryItemConnection @aws_cognito_user_pools
+  voucherRequests(
+    coach_id: String
+    date_filter: DateFilter
+    next_token: String
+    status: VoucherRequestStatus
+  ): VoucherRequestConnection @aws_cognito_user_pools
+  warehouse(id: String): Warehouse @aws_cognito_user_pools
+  warehouses(
+    channel: ChannelType
+    next_token: String
+    type: WarehouseType
+  ): WarehouseConnection @aws_cognito_user_pools
+}
+
+type Report {
+  error: String
+  request_id: ID!
+  status: String
+  url: AWSURL
+}
+
+type Return implements ITransaction {
+  batch_items: [BatchReturnItems]
+  created_by: String
+  date_created: String
+  date_updated: String
+  id: String
+  invoice_id: String
+  logs: [TransactionLog]
+  remarks: String
+  return_from: String
+  return_type: ReturnType
+  status: TransactionStatus
+  updated_by: String
+  warehouse_id: String
+}
+
+type S3Object {
+  bucket: String!
+  key: String!
+  region: String!
+}
+
+type SKU @aws_cognito_user_pools {
+  channel: ChannelType
+  dce_status: SKUBlockStatus
+  description: String
+  gtin: String
+  id: String
+  name: String
+  price: Float
+  price_gross: Float
+  promo: Promo
+  sku: String
+  type: SKUType
+  unit_of_measure: String
+}
+
+type SKUBlockLogs @aws_cognito_user_pools {
+  date_created: AWSTimestamp
+  id: ID
+  log: String
+  modified_by: String
+  skus: [SKU]
+}
+
+type SKUBlockLogsConnection {
+  items: [SKUBlockLogs]
+}
+
+type SKUConnection @aws_cognito_user_pools {
+  items: [SKU]
+  next_token: String
+}
+
+type SKUInventory {
+  committed: Int
+  gtin: String
+  pullout: Int
+  released: Int
+  returned: Int
+  sku: String
+  transferred: Int
+  transferred_out: Int
+  transmittal: Int
+}
+
+type SKUInventoryConnection {
+  items: [SKUInventory]
+}
+
+type SMSTemplate {
+  id: ID
+  message: String
+  type: String
+}
+
+type SaleTransaction @aws_cognito_user_pools {
+  cegid_no: String
+  club_status: ClubStatus
+  created_by: ID
+  customer_information: CustomerInformation
+  date_created: AWSTimestamp
+  date_inputted: AWSTimestamp
+  date_updated: AWSTimestamp
+  id: ID
+  is_refunded: Boolean
+  items: [LineItem]
+  lead_source: LeadSource
+  order_date: String
+  payment_type: String
+  payments_info: [PaymentInfo]
+  remarks: String
+  remittance_slip: S3Object
+  return_notes: String
+  sales_expert: String
+  signature: S3Object
+  total_price: Float
+  transaction_id: ID
+  transaction_no: ID!
+  type: String
+  underwent_guided_trial: Boolean
+  updated_by: ID
+  warehouse_id: ID
+}
+
+type SaleTransactionConnection @aws_cognito_user_pools {
+  items: [SaleTransaction]
+  nextToken: String
+  total: Int
+}
+
+type SalesExpert @aws_cognito_user_pools {
+  email: String
+  name: String
+  office_ids: [String]
+  phone_number: String
+  sales_expert_id: String
+  user_status: UserStatus
+}
+
+type SalesExpertConnection @aws_cognito_user_pools {
+  items: [SalesExpert]
+  next_token: String
+}
+
+type SalesSummary {
+  declared_sales_amount: Float
+  final_sales_amount: Float
+  total_cash_sales: Float
+  total_cc_sales: Float
+  total_dc_sales: Float
+  total_gcash_sales: Float
+  total_sales: Float
+  x_reading_total_sales: Float
+}
+
+type SalesUpload {
+  error_logs: [String]
+  error_url: AWSURL
+  uno_project_url: AWSURL
+  errors: Int
+  processed_file: S3Object
+  request_id: ID
+  rows: Int
+  valid: Int
+}
+
+type Stocks {
+  materials: [Material]
+  shop_number: String
+}
+
+type Storage {
+  batches: [Batch]
+  location: String
+}
+
+type Subscription {
+  onReportDownload(request_id: ID!): Report
+    @aws_subscribe(mutations: ["reportDownload"])
+  onUpload(request_id: ID!): SalesUpload
+    @aws_subscribe(mutations: ["validateUpload"])
+}
+
+type Theft {
+  accessories: Int
+  date: String
+  date_created: String
+  description: String
+  devices: Int
+  heets: Int
+  time: String
+  warehouse_id: ID
+}
+
+type TheftsConnection {
+  items: [Theft]
+  next_token: String
+}
+
+type Threshold {
+  gtin: String
+  sku: String
+  value: Int
+}
+
+type ThresholdConfig {
+  id: ID
+  recipients: [AWSEmail]
+  thresholds: [Threshold]
+  warehouse_id: ID
+}
+
+type ThresholdConfigConnection {
+  items: [ThresholdConfig]
+}
+
+type Transaction implements ITransaction {
+  batch_items: [BatchItems]
+  date_created: String
+  date_updated: String
+  id: String
+  invoice_id: String
+  pullout_type: PulloutType
+  remarks: String
+  return_type: ReturnType
+  status: TransactionStatus
+  type: TransactionType
+  warehouse_id: String
+}
+
+type TransactionConnection {
+  items: [Transaction]
+  next_token: String
+}
+
+type TransactionLog {
+  date_updated: String
+  item: BatchItems
+  updated_by: String
+}
+
+type Transfer implements ITransaction {
+  batch_items: [BatchTransferItems]
+  created_by: String
+  date_created: String
+  date_updated: String
+  id: String
+  invoice_id: String
+  logs: [TransactionLog]
+  reason_for_cancel: String
+  remarks: String
+  status: TransactionStatus
+  to_warehouse_id: String
+  updated_by: String
+  warehouse_id: String
+}
+
+type TransferConnection {
+  items: [Transfer]
+  next_token: String
+}
+
+type Transmittal implements ITransaction {
+  batch_items: [BatchTransmittalItems]
+  created_by: String
+  date: String
+  date_created: String
+  date_updated: String
+  delivery_source: String
+  from_warehouse_id: String
+  id: String
+  invoice_id: String
+  logs: [TransactionLog]
+  remarks: String
+  status: TransactionStatus
+  time: String
+  updated_by: String
+  warehouse_id: String
+}
+
+type TransmittalConnection {
+  items: [Transmittal]
+  next_token: String
+}
+
+type UploadReceipts {
+  excess_amount: Float
+  reason: String
+  receipt: S3Object
+  x_receipt: S3Object
+}
+
+type UploadSlip {
+  additional: S3Object
+  reason: String
+  remittance: S3Object
+}
+
+type UsageData {
+  charger_cycle: Float
+  device_cycle: Float
+  holder_cycle: Float
+  version: String
+}
+
+type UsageHistory {
+  post: UsageData
+  pre: UsageData
+}
+
+type User {
+  user_status: UserStatus
+  username: String
+}
+
+type VoucherRequest @aws_cognito_user_pools {
+  lead_id: String
+  requested_purchase_code: String
+  requested_purchase_code_type: PromoType
+}
+
+type VoucherRequestConnection @aws_cognito_user_pools {
+  items: [VoucherRequest]
+  next_token: String
+}
+
+type Wallet {
+  balance: Float
+  logs: WalletTransactionConnection
+}
+
+type WalletTransaction {
+  amount: Float
+  balance: Float
+  from_user: ID
+  prev_balance: Float
+  timestamp: AWSTimestamp
+  to_user: ID
+  transaction_by: ID
+  type: WalletTransactionType
+}
+
+type WalletTransactionConnection {
+  items: [WalletTransaction]
+  nextToken: String
+}
+
+type Warehouse @aws_cognito_user_pools {
+  accounts: Accounts
+  area: String
+  channel: ChannelType
+  cutoff_time: AWSTime
+  ecomm_sms: SMSTemplate
+  id: String
+  name: String
+  status: Boolean
+  total_items: Int
+  type: WarehouseType
+  with_caveat: Boolean
+  zip_codes: [ZipCode]
+}
+
+type WarehouseConnection @aws_cognito_user_pools {
+  items: [Warehouse]
+  next_token: String
+}
+
+type ZipCode {
+  from: Int
+  to: Int
+}
+
+enum AssetType {
+  PHOTO
+  VIDEO
+}
+
+enum AttendanceType {
+  TIME_IN
+  TIME_OUT
+}
+
+enum ChannelType {
+  DIRECT_RETAIL
+  INDIRECT_CHANNEL
+  ECOMM
+  FULL_ADMIN
+}
+
+enum ClubStatus {
+  GOLD
+  NA
+  NOT_A_MEMBER
+  PLATINUM
+  SILVER
+}
+
+enum DirectTransferType {
+  ECOMM_TO_RETAIL
+  RETAIL_TO_ECOMM
+  ECOMM_TO_INDIRECT
+  RETAIL_TO_IC
+  IC_TO_ECOMM
+}
+
+enum DiscountType {
+  CART
+  LINE_ITEM
+}
+
+enum GuidedTrialType {
+  GT
+  GT_RS
+}
+
+enum InventoryItemStatus {
+  AVAILABLE
+  DAMAGED
+  LOSS
+  PENDING
+  PULLOUT
+  REDEEMED
+  RELEASED
+}
+
+enum LeadSource {
+  PERSONAL_NETWORK
+  WALK_IN
+}
+
+enum MentholVariant {
+  MENTHOL
+  NON_MENTHOL
+}
+
+enum PromoStatus {
+  DISABLED
+  ENABLED
+}
+
+enum PromoType {
+  ERP
+  FREE_GOODS
+  FREE_HEETS
+  LVC
+  RAF
+  STARTER_KIT
+  VOUCHER
+}
+
+enum PulloutType {
+  Activation
+  BadInventory
+  ForSelling
+  FreebiesSample
+  SalesExpert
+}
+
+enum ReportType {
+  DEVICES
+  EOD
+  GUIDED_TRIAL
+  INVENTORY
+  PULLOUT
+  SALES
+  SALES_ZIP
+  STOCK_DATA
+  TRANSACTIONS
+  TRANSMITTAL
+}
+
+enum ReturnType {
+  Activation
+  ReturnInventory
+  SalesExpert
+}
+
+enum Role {
+  Admin
+  AdminCRM
+  AdminCSC
+  AdminDR
+  AdminViewOnly
+  CSC
+  Coach
+  Dispatcher
+  Executive
+  External
+  PMFTCAdministrator
+  Packer
+  WarehousePersonnel
+}
+
+enum SKUBlockStatus {
+  BLOCKED
+  UNBLOCKED
+}
+
+enum SKUType {
+  ACCESSORIES
+  DEVICES
+  HEETS
+  VOUCHER
+  ZYN
+}
+
+enum SortOrder {
+  asc
+  desc
+}
+
+enum TransactionStatus {
+  CANCELLED
+  COMPLETED
+  DECLINED
+  DELETE
+  FLOATING
+  PENDING
+}
+
+enum TransactionType {
+  CONVERSION
+  DIRECT_TRANSFER
+  PULLOUT
+  RECON
+  RETURN
+  TRANSFER
+  TRANSMITTAL
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum VoucherRequestStatus {
+  APPROVED
+  DECLINED
+  PENDING
+}
+
+enum WalletTransactionType {
+  DEPOSIT
+  PAYMENT
+  REMITTANCE
+  TRANSFER
+  WITHDRAWAL
+}
+
+enum WarehouseType {
+  CSC
+  LENDING
+  ROADSHOW
+  STORE
+  WAREHOUSE
+}
+
+input AccountsInput {
+  cod: String
+  non_cod: String
+}
+
+input AdminInput {
+  channel: ChannelType
+  email: String!
+  name: String!
+  office_id: String!
+  office_ids: [String]
+  office_name: String!
+  phone_number: String!
+  roles: [Role]!
+  username: String
+}
+
+input AdminUpdateInput {
+  channel: ChannelType
+  email: String
+  name: String
+  office_id: String
+  office_ids: [String]
+  office_name: String
+  phone_number: String
+  roles: [Role]
+  username: String!
+}
+
+input BatchItemsInput {
+  batch_id: String!
+  channel: ChannelType
+  expiration_date: String
+  gtin: String!
+  input_by: String
+  manufacturing_date: String
+  quantity: Int!
+  received: Int
+}
+
+input CategoryItemInput {
+  title: String
+  type: String
+  value: String
+}
+
+input CoachInput {
+  coach_id: String!
+  email: String!
+  name: String!
+  phone_number: String!
+}
+
+input CoachUpdateInput {
+  coach_id: String!
+  email: String!
+  name: String!
+  phone_number: String!
+  user_status: UserStatus!
+}
+
+input ConversionInput {
+  date: String
+  invoice_id: String
+  remarks: String
+  time: String
+  warehouse_id: ID!
+}
+
+input ConversionUpdateInput {
+  channel: ChannelType
+  date: String
+  id: String!
+  invoice_id: String
+  remarks: String
+  status: TransactionStatus
+  time: String
+}
+
+input ConvertItemsInput {
+  channel: ChannelType!
+  destination_gtin: String!
+  gtin: String!
+  input_by: String
+  multiplier: Float!
+  quantity: Int!
+}
+
+input CustomDateFilter {
+  attribute: String
+  from: String
+  to: String
+}
+
+input CustomFilter {
+  attribute: String
+  value: String
+}
+
+input CustomerInformationInput {
+  email: String
+  first_name: String
+  last_name: String
+  mobile_number: String
+}
+
+input DateFilter {
+  from: String
+  to: String
+}
+
+input DirectTransferInput {
+  remarks: String
+  to_warehouse_id: String
+  transfer_type: DirectTransferType!
+  warehouse_id: String
+}
+
+input EndOfDayInput {
+  created_by: ID!
+  datetime: AWSTimestamp!
+  finance_declarations: FinanceDecarationsInput
+  invoice_id: ID!
+  non_sellable_declarations: [NonSellableItemInput]
+  warehouse_id: ID!
+}
+
+input FilterInput {
+  attribute: String
+  value: String
+}
+
+input FinanceDecarationsInput {
+  proof_of_payment: ProofOfPaymentInput
+  sales_summary: SalesSummaryInput
+  upload_slip: UploadSlipInput
+  uploads: UploadReceiptsInput
+}
+
+input GeoLocationInput {
+  latitude: Float
+  longitude: Float
+}
+
+input GuidedTrialInput {
+  created_by: String
+  customer_information: CustomerInformationInput
+  date_created: AWSTimestamp
+  device: String
+  first_time_gt: Boolean
+  items: [LineItemInput]
+  remarks: String
+  sales_expert: String
+  sales_transaction: SaleTransactionInput
+  sgt: Boolean
+  type: GuidedTrialType
+  warehouse_id: ID
+}
+
+input InventoryCheckInput {
+  gtin: String
+  quantity: Int
+  warehouse_id: ID!
+}
+
+input InventoryItemInput {
+  batch_id: String!
+  charger_serial: String
+  gtin: String!
+  holder_serial: String
+  serial: String!
+  tag: String
+  transmittal_id: String!
+  type: String
+}
+
+input LineItemInput {
+  discount: Float
+  gtin: ID!
+  inputs: [String]
+  is_promo_good: Boolean
+  lead_source: LeadSource
+  menthol_variant: MentholVariant
+  price: Float
+  promo: ID
+  promo_discount: Float
+  promo_type: String
+  quantity: Int
+  serials: [ID]
+  sku: SKUInput
+}
+
+input NonSellableItemInput {
+  category: String
+  category_items: [CategoryItemInput]
+}
+
+input PromoInput {
+  code: ID
+  description: String
+  discount: Float
+  discount_type: DiscountType
+  name: String
+  status: PromoStatus
+  type: PromoType
+}
+
+input ProofOfPaymentInput {
+  date_of_deposit: AWSDate
+  deposit_reference_number: String
+  total_cash_deposit: Float
+}
+
+input PulloutInput {
+  pullout_type: PulloutType
+  warehouse_id: String
+}
+
+input PulloutItemInput {
+  pullout_id: String!
+  serial: String!
+}
+
+input PulloutUpdateInput {
+  id: String!
+  invoice_id: String
+  pullout_to: String
+  pullout_type: PulloutType
+  remarks: String
+  status: TransactionStatus
+}
+
+input ReconcileInput {
+  serial: String!
+  warehouse_id: String
+}
+
+input RefundTransactionInput {
+  created_by: String
+  customer_information: CustomerInformationInput
+  items: [LineItemInput]
+  remarks: String
+  transaction_id: ID!
+  transaction_no: ID
+  warehouse_id: ID
+}
+
+input ReturnInput {
+  return_type: ReturnType
+  warehouse_id: String
+}
+
+input ReturnItemInput {
+  return_id: String!
+  serial: String!
+}
+
+input ReturnUpdateInput {
+  id: String!
+  invoice_id: String
+  remarks: String
+  return_from: String
+  return_type: ReturnType
+  status: TransactionStatus
+}
+
+input S3ObjectInput {
+  bucket: String!
+  key: String!
+  localUri: String
+  mimeType: String
+  region: String!
+}
+
+input SKUBlockInput {
+  skus: [SKUInput]
+  status: SKUBlockStatus
+}
+
+input SKUInput {
+  channel: ChannelType
+  description: String
+  gtin: String!
+  name: String
+  price: Float
+  price_gross: Float
+  promo: PromoInput
+  sku: String!
+  type: SKUType
+  unit_of_measure: String
+}
+
+input SaleTransactionInput {
+  cegid_no: String
+  club_status: ClubStatus
+  created_by: String
+  customer_information: CustomerInformationInput
+  date_created: AWSTimestamp
+  items: [LineItemInput]
+  lead_source: LeadSource
+  payment_type: String
+  remarks: String
+  remittance_slip: S3ObjectInput
+  return_notes: String
+  sales_expert: String
+  signature: S3ObjectInput
+  total_price: Float
+  transaction_no: ID
+  type: String
+  underwent_guided_trial: Boolean
+  warehouse_id: ID
+}
+
+input SalesExpertInput {
+  email: String
+  name: String!
+  office_ids: [String]
+  phone_number: String
+  sales_expert_id: String!
+}
+
+input SalesExpertUpdateInput {
+  email: String
+  name: String!
+  office_ids: [String]
+  phone_number: String
+  sales_expert_id: String!
+  user_status: UserStatus
+}
+
+input SalesSummaryInput {
+  declared_sales_amount: Float
+  final_sales_amount: Float
+  total_cash_sales: Float
+  total_cc_sales: Float
+  total_dc_sales: Float
+  total_gcash_sales: Float
+  total_sales: Float
+  x_reading_total_sales: Float
+}
+
+input SortInput {
+  attribute: String
+  order: SortOrder
+}
+
+input TheftInput {
+  accessories: Int
+  date: String
+  description: String
+  devices: Int
+  heets: Int
+  time: String
+}
+
+input ThresholdConfigInput {
+  recipients: [AWSEmail]
+  thresholds: [ThresholdInput]
+  warehouse_id: ID!
+}
+
+input ThresholdInput {
+  gtin: String
+  sku: String
+  value: Int
+}
+
+input TimestampFilter {
+  from: AWSTimestamp!
+  to: AWSTimestamp!
+}
+
+input TransferInput {
+  remarks: String
+  to_warehouse_id: String
+  warehouse_id: String
+}
+
+input TransferItemInput {
+  serial: String!
+  transfer_id: String!
+}
+
+input TransferUpdateInput {
+  id: String!
+  invoice_id: String
+  remarks: String
+  status: TransactionStatus
+  to_warehouse_id: String
+}
+
+input TransmittalInput {
+  date: String
+  delivery_source: String
+  invoice_id: String
+  remarks: String
+  time: String
+  warehouse_id: String!
+}
+
+input TransmittalUpdateInput {
+  date: String
+  delivery_source: String
+  from_warehouse_id: String
+  id: String!
+  invoice_id: String
+  remarks: String
+  status: TransactionStatus
+  time: String
+}
+
+input UploadReceiptsInput {
+  excess_amount: Float
+  reason: String
+  receipt: S3ObjectInput
+  x_receipt: S3ObjectInput
+}
+
+input UploadSlipInput {
+  additional: S3ObjectInput
+  reason: String
+  remittance: S3ObjectInput
+}
+
+input VoucherRedeemInput {
+  lead_id: String
+  promo_type: String
+}
+
+input VoucherRequestInput {
+  code: String
+  lead_id: String
+  promo_type: PromoType
+}
+
+input VoucherRequestUpdateInput {
+  code: String
+  id: String
+  status: VoucherRequestStatus
+}
+
+input WarehouseInput {
+  accounts: AccountsInput
+  area: String
+  channel: ChannelType
+  cutoff_time: AWSTime
+  id: String!
+  name: String
+  status: Boolean
+  type: WarehouseType
+  with_caveat: Boolean
+  zip_codes: [ZipCodeInput]
+}
+
+input ZipCodeInput {
+  from: Int
+  to: Int
+}

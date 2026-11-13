@@ -1,0 +1,302 @@
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+type Address @aws_cognito_user_pools @aws_iam {
+  address_extension: String
+  birthday: String
+  city: String
+  contact_no: AWSPhone
+  country: String
+  email: AWSEmail
+  region: String
+  street: String
+  zip: String
+}
+
+type Banner @aws_cognito_user_pools {
+  banner_id: ID
+  filename: String
+  image: AWSURL
+  reroute: String
+}
+
+type Banners @aws_cognito_user_pools {
+  items: [Banner]
+}
+
+type Cart @aws_cognito_user_pools @aws_iam {
+  items: [CartItem]
+  payment_type: String
+}
+
+type CartItem @aws_cognito_user_pools @aws_iam {
+  amount: Float
+  description: String
+  discount: Float
+  quantity: Int
+  sku: ID
+}
+
+type DeliveryLog @aws_cognito_user_pools @aws_iam {
+  status: String
+  status_datetime: AWSTimestamp
+}
+
+type EComOrder @aws_cognito_user_pools @aws_iam {
+  delivery_status: String
+  delivery_status_logs: [DeliveryLog]
+  id: ID
+  order_status: String
+  order_status_logs: [DeliveryLog]
+  retry_count: Int
+}
+
+type Mutation {
+  bannerCreateUpdate(inputs: [BannerInput!]!, type: BannerType!): Banners
+    @aws_cognito_user_pools
+  bannerRemove(is_primary: Boolean, type: BannerType!): String
+    @aws_cognito_user_pools
+  orderCancel(order_id: ID!, payment_id: ID!, total_amount: Float!): String
+    @aws_cognito_user_pools
+  orderCreate(input: OrderCreateInput!): Order @aws_cognito_user_pools @aws_iam
+  orderUpdate(ecom_order: ID, order_id: ID!, status: LeadStatus!): Order
+    @aws_cognito_user_pools
+    @aws_iam
+  primaryLendingBannerCreateUpdate(
+    input: PrimaryLendingBannerInput!
+  ): PrimaryLendingBanner @aws_cognito_user_pools
+  skuCategoryCreate(id: ID, name: String!): SKUCategory @aws_cognito_user_pools
+  skuCategoryRemove(id: ID!): String @aws_cognito_user_pools
+  skuCategoryUpdate(id: ID!, name: String!): SKUCategory @aws_cognito_user_pools
+  skuCreate(input: SKUInput!): SKU @aws_cognito_user_pools
+  skuRemove(id: ID!): String @aws_cognito_user_pools
+  skuUpdate(id: ID!, input: SKUUpdateInput!): SKU @aws_cognito_user_pools
+  userCreate(input: UserInput!): User @aws_cognito_user_pools
+  userDisable(username: ID!): User @aws_cognito_user_pools
+  userEnable(username: ID!): User @aws_cognito_user_pools
+  userUpdate(input: UserUpdateInput!, username: ID!): User
+    @aws_cognito_user_pools
+}
+
+type Order @aws_cognito_user_pools @aws_iam {
+  address: Address
+  cart: Cart
+  channel: String
+  date_created: AWSTimestamp
+  dce_id: ID
+  discount: Float
+  ecom_order: ID
+  id: ID
+  name: String
+  payment_id: ID
+  promo_code: ID
+  source: String
+  status: LeadStatus
+  tickers: Tickers
+  total_amount: Float
+  tracking: EComOrder
+}
+
+type OrderConnection @aws_cognito_user_pools @aws_iam {
+  items: [Order]
+  nextToken: String
+}
+
+type PrimaryLendingBanner @aws_cognito_user_pools {
+  filename: String
+  image: AWSURL
+  landing_message: String
+  reroute: String
+  warning_message: String
+}
+
+type Query {
+  banners(type: BannerType!): Banners @aws_cognito_user_pools
+  customerOrders(customer_id: ID!, next_token: String): OrderConnection
+    @aws_cognito_user_pools
+    @aws_iam
+  order(order_id: ID!): Order @aws_cognito_user_pools @aws_iam
+  orders(
+    from: AWSTimestamp
+    next_token: String
+    to: AWSTimestamp
+  ): OrderConnection @aws_cognito_user_pools @aws_iam
+  primaryLendingBanner: PrimaryLendingBanner @aws_cognito_user_pools
+  sku(id: ID!): SKU @aws_cognito_user_pools
+  skuCategories: [SKUCategory] @aws_cognito_user_pools
+  skus(category_id: ID): [SKU] @aws_cognito_user_pools
+  user(username: ID!): User @aws_cognito_user_pools
+  users(next_token: String): UserConnection @aws_cognito_user_pools
+}
+
+type SKU {
+  category: SKUCategory
+  description: String
+  description_image: [AWSURL]
+  discount: Float
+  hex: String
+  id: ID
+  images: [AWSURL]
+  is_enabled: Boolean
+  is_highlighted: Boolean
+  name: String
+  price: Float
+  sku: ID
+  thumbnail: AWSURL
+}
+
+type SKUCategory {
+  id: ID
+  name: String
+}
+
+type Subscription {
+  onOrderCreated: Order
+    @aws_cognito_user_pools
+    @aws_subscribe(mutations: ["orderCreate"])
+}
+
+type Tickers @aws_cognito_user_pools @aws_iam {
+  data_privacy: Boolean
+  marketing: Boolean
+  terms_and_conditions: Boolean
+}
+
+type User @aws_cognito_user_pools {
+  email: AWSEmail
+  id: ID!
+  name: String
+  status: UserStatus
+  username: ID!
+}
+
+type UserConnection @aws_cognito_user_pools {
+  items: [User]
+  nextToken: String
+}
+
+enum BannerType {
+  LENDING
+  SALE
+}
+
+enum LeadStatus {
+  CANCELLED
+  DRAFT
+  PENDING
+  PENDING_PAYMENT
+  VERIFIED
+}
+
+enum UserStatus {
+  DISABLED
+  ENABLED
+}
+
+input AddressInput {
+  address_extension: String
+  birthday: String
+  city: String
+  contact_no: AWSPhone
+  country: String
+  email: AWSEmail
+  region: String
+  street: String
+  zip: String
+}
+
+input BannerInput {
+  banner_id: ID
+  filename: String!
+  image: AWSURL!
+  reroute: String
+}
+
+input CartInput {
+  items: [CartItemInput!]!
+  payment_type: String
+}
+
+input CartItemInput {
+  amount: Float
+  description: String
+  discount: Float
+  quantity: Int
+  sku: ID
+}
+
+input OrderCreateInput {
+  address: AddressInput!
+  cart: CartInput!
+  channel: String!
+  customer_id: ID!
+  dce_id: ID
+  discount: Float
+  first_name: String!
+  id: ID!
+  last_name: String!
+  name: String!
+  payment_id: ID
+  promo_code: ID
+  source: ID
+  tickers: TickersInput
+  total_amount: Float!
+}
+
+input PrimaryLendingBannerInput {
+  filename: String!
+  image: AWSURL!
+  landing_message: String
+  reroute: String
+  warning_message: String
+}
+
+input SKUInput {
+  category_id: ID!
+  description: String
+  description_image: [AWSURL]
+  discount: Float
+  hex: String
+  images: [AWSURL]
+  inventory: Int
+  is_highlighted: Boolean
+  name: String!
+  price: Float
+  sku: ID!
+  thumbnail: AWSURL
+}
+
+input SKUUpdateInput {
+  category_id: String
+  description: String
+  description_image: [AWSURL]
+  discount: Float
+  hex: String
+  images: [AWSURL]
+  inventory: Int
+  is_enabled: Boolean
+  is_highlighted: Boolean
+  name: String
+  price: Float
+  thumbnail: AWSURL
+}
+
+input TickersInput {
+  data_privacy: Boolean
+  marketing: Boolean
+  terms_and_conditions: Boolean
+}
+
+input UserInput {
+  email: AWSEmail!
+  name: String!
+  username: ID!
+}
+
+input UserUpdateInput {
+  email: AWSEmail
+  name: String
+}
